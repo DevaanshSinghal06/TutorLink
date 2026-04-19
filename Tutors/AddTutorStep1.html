@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tutor Registration</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+
+<body>
+
+<div class="top-bar">The University of Texas at Dallas</div>
+
+<div class="navbar">
+    <a href="/TUTORLINK/Dashboard.php">Home</a>
+    <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
+    <a href="/TUTORLINK/Tutors/TutorsDashboard.php">Tutors</a>
+    <a href="/TUTORLINK/Lessons/LessonsDashboard.php">Lessons</a>
+</div>
+
+<div class="container">
+
+<h2>Tutor Registration</h2>
+
+<form action="../PHP/tutorStep1Handler.php" method="post">
+
+<label>First Name</label>
+<input type="text" name="firstName" required>
+
+<label>Surname</label>
+<input type="text" name="surname">
+
+<label>Age</label>
+<input type="number" name="age" required>
+
+<label>Phone</label>
+<input type="text" name="phone">
+
+<label>Email</label>
+<input type="email" name="email">
+
+<label>Tutor Type</label>
+<select name="tutorType" required>
+    <option value="">--Select--</option>
+    <option value="UTD">UTD Tutor</option>
+    <option value="External">External Tutor</option>
+</select>
+
+<button type="submit">Continue</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

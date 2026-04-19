@@ -1,0 +1,270 @@
+/* RESET */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* TOP BAR */
+.top-bar {
+    background-color: #154734;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    color: white;
+    font-weight: bold;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: white;
+    border-bottom: 2px solid #ddd;
+    padding: 10px 20px;
+}
+
+.navbar a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: #154734;
+    font-weight: bold;
+}
+
+.navbar a:hover {
+    color: #e87500;
+}
+
+/* MAIN CONTAINER */
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border: 1px solid #ddd;
+}
+
+/* HEADINGS */
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* FORM */
+form {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+/* INPUTS */
+input, select {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+}
+
+.schedule-section {
+    margin-top: 25px; /* creates intentional separation */
+}
+
+.date-group input {
+    margin-bottom: 5px;   /* reduce from 15px */
+}
+
+.date-group .inline-button {
+    margin-top: 5px;      /* tighten spacing further */
+}
+
+/* BUTTON (GLOBAL PRIMARY BUTTON) */
+button {
+    margin-top: 20px;
+    padding: 12px;
+    background-color: #e87500;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #c95100;
+    opacity: 0.9;
+}
+
+.duration-note {
+    font-size: 13px;
+    color: #777;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* INLINE BUTTON (for "Check Availability") */
+.inline-button {
+    margin-top: 8px;              /* override global 20px */
+    padding: 8px 14px;
+    font-size: 14px;
+    width: fit-content;           /* prevents full-width stretch */
+}
+
+.availability-box {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #eef7f3;
+    border-left: 5px solid #154734;
+    border-radius: 5px;
+}
+
+/* OPTIONAL: GROUP DATE + BUTTON CLEANLY */
+.date-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+/* HEADERS */
+th {
+    background-color: #154734;
+    color: white;
+    padding: 12px;
+    text-align: center;
+}
+
+/* CELLS */
+td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* ROW HOVER */
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* ACTION COLUMN */
+.action-col {
+    text-align: center;
+    width: 180px;
+    white-space: nowrap;
+}
+
+/* TOAST */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #5fe0b7;
+    color: #0a3d2c;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ERROR */
+.error {
+    background-color: #ffe5e5;
+    color: #b30000;
+    padding: 12px 15px;
+    border-left: 5px solid #e60000;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* ACTION LINKS */
+td .action-link {
+    text-decoration: none !important;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+/* COLORS */
+td .action-link.delete {
+    color: #e53935 !important;
+}
+
+td .action-link.cancel {
+    color: #e87500 !important;
+}
+
+td .action-link.noshow {
+    color: #555 !important;
+}
+
+/* HOVER */
+td .action-link:hover {
+    text-decoration: underline;
+}
+
+/* STATUS */
+.status {
+    font-weight: bold;
+}
+
+.status.upcoming {
+    color: #e87500;
+}
+
+.status.in-progress {
+    color: #1e88e5;
+}
+
+.status.completed {
+    color: #4CAF50;
+}
+
+.status.cancelled {
+    color: #e53935;
+}
+
+.status.no-show {
+    color: #555;
+}
+
+.time-grid {
+    display: flex;
+    flex-wrap: wrap;     /* allows wrapping to next line */
+    gap: 8px;            /* spacing between buttons */
+}
+
+.time-slot {
+    padding: 6px 10px;
+    background-color: #154734;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.time-slot:hover {
+    background-color: #e87500;
+}
+
+.time-slot.selected {
+    background-color: #154734;
+    color: white;
+}

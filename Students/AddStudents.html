@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Student</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+<!-- UTD TOP BAR -->
+<div class="top-bar">
+    The University of Texas at Dallas
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <a href="/TUTORLINK/Dashboard.php">Home</a>
+    <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
+    <a href="/TUTORLINK/Tutors/TutorsDashboard.php">Tutors</a>
+    <a href="/TUTORLINK/Lessons/LessonsDashboard.php">Lessons</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+<h2>Register New Student</h2>
+
+<!-- ERROR BOX -->
+<div id="errorBox" class="error" style="display:none;"></div>
+
+<form action="../PHP/addStudent.php" method="post">
+
+    <label>First Name</label>
+    <input type="text" name="firstName" required>
+
+    <label>Surname</label>
+    <input type="text" name="surname">
+
+    <label>Age</label>
+    <input type="number" name="age" min="1" max="99" required>
+
+    <label>Phone Number</label>
+    <input type="text" name="phone">
+
+    <label>Email</label>
+    <input type="email" name="email">
+
+    <label>NetID</label>
+    <input type="text" name="netid" maxlength="10">
+
+    <label>Comet ID</label>
+    <input type="text" name="cometid" maxlength="10">
+
+    <label>Graduation Year</label>
+    <input type="number" name="gradyear">
+
+    <button type="submit">Register Student</button>
+
+</form>
+
+</div>
+
+<!-- SCRIPT FOR ERROR DISPLAY -->
+<script>
+const params = new URLSearchParams(window.location.search);
+const error = params.get('error');
+
+if (error) {
+    const box = document.getElementById('errorBox');
+    box.style.display = 'block';
+    box.innerHTML = error.split(" | ").map(e => "• " + e).join("<br>");
+}
+</script>
+
+</body>
+</html>
