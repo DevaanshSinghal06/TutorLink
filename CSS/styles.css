@@ -1,5 +1,6 @@
 /* =========================================
    RESET / BASE
+   Global defaults for consistent styling
 ========================================= */
 body {
     margin: 0;
@@ -9,9 +10,10 @@ body {
 
 /* =========================================
    LAYOUT
+   Core page structure (header, nav, container)
 ========================================= */
 
-/* Top bar */
+/* Top bar (branding/header) */
 .top-bar {
     background-color: #154734;
     height: 40px;
@@ -22,7 +24,7 @@ body {
     font-weight: bold;
 }
 
-/* Navbar */
+/* Navigation bar */
 .navbar {
     background-color: white;
     border-bottom: 2px solid #ddd;
@@ -40,7 +42,7 @@ body {
     color: #e87500;
 }
 
-/* Main container */
+/* Main content container */
 .container {
     width: 90%;
     max-width: 1100px;
@@ -63,6 +65,7 @@ h2 {
    FORM STRUCTURE
 ========================================= */
 
+/* Form layout */
 form {
     display: flex;
     flex-direction: column;
@@ -72,7 +75,7 @@ form {
     box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
 
-/* Inputs */
+/* Inputs + dropdowns */
 input, select {
     padding: 10px;
     margin-top: 10px;
@@ -80,11 +83,12 @@ input, select {
     border: 1px solid #ccc;
 }
 
-/* Grouping */
+/* Spacing group for scheduling section */
 .schedule-section {
     margin-top: 25px;
 }
 
+/* Date + availability button grouping */
 .date-group {
     display: flex;
     flex-direction: column;
@@ -98,7 +102,7 @@ input, select {
     margin-top: 5px;
 }
 
-/* Small helper text */
+/* Helper text (duration note) */
 .duration-note {
     font-size: 13px;
     color: #777;
@@ -111,7 +115,7 @@ input, select {
    BUTTONS
 ========================================= */
 
-/* Primary button */
+/* Primary action buttons */
 button {
     margin-top: 20px;
     padding: 12px;
@@ -128,7 +132,7 @@ button:hover {
     opacity: 0.9;
 }
 
-/* Inline button (availability) */
+/* Smaller inline button (e.g., availability check) */
 .inline-button {
     margin-top: 8px;
     padding: 8px 14px;
@@ -140,6 +144,7 @@ button:hover {
    AVAILABILITY COMPONENT
 ========================================= */
 
+/* Container box for available times */
 .availability-box {
     margin-top: 15px;
     padding: 10px;
@@ -148,14 +153,14 @@ button:hover {
     border-radius: 5px;
 }
 
-/* Grid layout for time slots */
+/* Grid layout for time slot buttons */
 .time-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-/* Time slot buttons */
+/* Individual time slot buttons */
 .time-slot {
     padding: 6px 10px;
     background-color: #154734;
@@ -169,6 +174,7 @@ button:hover {
     background-color: #e87500;
 }
 
+/* Selected time slot state */
 .time-slot.selected {
     background-color: #154734;
     color: white;
@@ -178,6 +184,7 @@ button:hover {
    TABLES
 ========================================= */
 
+/* Table layout */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -185,6 +192,7 @@ table {
     background-color: white;
 }
 
+/* Table headers */
 th {
     background-color: #154734;
     color: white;
@@ -192,17 +200,19 @@ th {
     text-align: center;
 }
 
+/* Table cells */
 td {
     padding: 12px;
     border: 1px solid #ddd;
     text-align: center;
 }
 
+/* Row hover effect */
 tr:hover {
     background-color: #f9f9f9;
 }
 
-/* Action column */
+/* Action column (edit/delete buttons) */
 .action-col {
     text-align: center;
     width: 180px;
@@ -213,7 +223,7 @@ tr:hover {
    FEEDBACK (TOAST / ERROR)
 ========================================= */
 
-/* Success toast */
+/* Success notification (toast) */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -230,12 +240,13 @@ tr:hover {
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+/* Toast visible state */
 .toast.show {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Error message */
+/* Error message box */
 .error {
     background-color: #ffe5e5;
     color: #b30000;
@@ -247,7 +258,7 @@ tr:hover {
 }
 
 /* =========================================
-   ACTION LINKS
+   ACTION LINKS (TABLE BUTTONS)
 ========================================= */
 
 td .action-link {
@@ -298,28 +309,4 @@ td .action-link:hover {
 
 .status.no-show {
     color: #555;
-}
-
-.time-grid {
-    display: flex;
-    flex-wrap: wrap;     /* allows wrapping to next line */
-    gap: 8px;            /* spacing between buttons */
-}
-
-.time-slot {
-    padding: 6px 10px;
-    background-color: #154734;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.time-slot:hover {
-    background-color: #e87500;
-}
-
-.time-slot.selected {
-    background-color: #154734;
-    color: white;
 }
