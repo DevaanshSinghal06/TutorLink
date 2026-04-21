@@ -1,6 +1,9 @@
 <?php
 include 'db.php';
 
+// =========================================
+// GET FORM DATA
+// =========================================
 $id = $_POST['id'];
 
 $firstName = $_POST['firstName'];
@@ -10,39 +13,46 @@ $phone     = $_POST['phone'];
 $email     = $_POST['email'];
 $type      = $_POST['tutorType'];
 
-$netid   = $_POST['netid'] ?: "NULL";
-$cometid = $_POST['cometid'] ?: "NULL";
-$tutorid = $_POST['tutorid'] ?: "NULL";
-$company = $_POST['company'] ?: "NULL";
-$other   = $_POST['other'] ?: "NULL";
+// =========================================
+// HANDLE NULL VALUES
+// =========================================
+$phone = empty($phone) ? "NULL" : "'$phone'";
+$email = empty($email) ? "NULL" : "'$email'";
 
-// Wrap strings properly
-$netid   = $netid === "NULL" ? "NULL" : "'$netid'";
-$cometid = $cometid === "NULL" ? "NULL" : "'$cometid'";
-$tutorid = $tutorid === "NULL" ? "NULL" : "'$tutorid'";
-$company = $company === "NULL" ? "NULL" : "'$company'";
-$other   = $other === "NULL" ? "NULL" : "'$other'";
-$phone   = empty($phone) ? "NULL" : "'$phone'";
-$email   = empty($email) ? "NULL" : "'$email'";
-
+// =========================================
+// UPDATE TUTOR CORE INFO
+// =========================================
 $sql = "UPDATE Tutors SET
 FirstName='$firstName',
 Surname='$surname',
 Age=$age,
 PhoneNumber=$phone,
 Email=$email,
-TutorType='$type',
-NetID=$netid,
-CometID=$cometid,
-TutorID=$tutorid,
-Company=$company,
-Other=$other
+TutorType='$type'
 WHERE TutorIndex=$id";
 
-if ($conn->query($sql) === TRUE) {
-    header("Location: /TUTORLINK/Tutors/ViewTutor.php?success=Tutor updated successfully");
-    exit();
-} else {
-    echo "Error: " . $conn->error;
+$conn->query($sql);
+
+// =========================================
+// UPDATE COURSE SPECIALIZATIONS
+// =========================================
+
+// Step 1: Remove ALL existing mappings
+$conn->query("DELETE FROM TutorCourses WHERE TutorIndex = $id");
+
+// Step 2: Insert newly selected courses
+if (isset($_POST['courses'])) {
+    foreach ($_POST['courses'] as $courseID) {
+        $conn->query("
+            INSERT INTO TutorCourses (TutorIndex, CourseIndex)
+            VALUES ($id, $courseID)
+        ");
+    }
 }
+
+// =========================================
+// REDIRECT
+// =========================================
+header("Location: /TUTORLINK/Tutors/ViewTutor.php?success=Tutor updated successfully");
+exit();
 ?>

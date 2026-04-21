@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- =========================================
+         META + STYLES
+    ========================================= -->
     <title>Add Student</title>
     <link rel="stylesheet" href="../CSS/styles.css">
     <meta charset="UTF-8">
@@ -8,12 +11,16 @@
 
 <body>
 
-<!-- UTD TOP BAR -->
+<!-- =========================================
+     TOP BAR (BRANDING)
+========================================= -->
 <div class="top-bar">
     The University of Texas at Dallas
 </div>
 
-<!-- NAVBAR -->
+<!-- =========================================
+     NAVIGATION BAR
+========================================= -->
 <div class="navbar">
     <a href="/TUTORLINK/Dashboard.php">Home</a>
     <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
@@ -21,16 +28,26 @@
     <a href="/TUTORLINK/Lessons/LessonsDashboard.php">Lessons</a>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- =========================================
+     MAIN CONTENT CONTAINER
+========================================= -->
 <div class="container">
 
 <h2>Register New Student</h2>
 
-<!-- ERROR BOX -->
+<!-- =========================================
+     ERROR DISPLAY BOX
+     (populated dynamically via URL params)
+========================================= -->
 <div id="errorBox" class="error" style="display:none;"></div>
 
+<!-- =========================================
+     STUDENT REGISTRATION FORM
+     Sends data to backend (addStudent.php)
+========================================= -->
 <form action="../PHP/addStudent.php" method="post">
 
+    <!-- Basic Info -->
     <label>First Name</label>
     <input type="text" name="firstName" required>
 
@@ -40,36 +57,50 @@
     <label>Age</label>
     <input type="number" name="age" min="1" max="99" required>
 
+    <!-- Contact Info -->
     <label>Phone Number</label>
     <input type="text" name="phone">
 
     <label>Email</label>
     <input type="email" name="email">
 
+    <!-- University Identifiers -->
     <label>NetID</label>
     <input type="text" name="netid" maxlength="10">
 
     <label>Comet ID</label>
     <input type="text" name="cometid" maxlength="10">
 
+    <!-- Academic Info -->
     <label>Graduation Year</label>
     <input type="number" name="gradyear">
 
+    <!-- Submit -->
     <button type="submit">Register Student</button>
 
 </form>
 
 </div>
 
-<!-- SCRIPT FOR ERROR DISPLAY -->
+<!-- =========================================
+     ERROR HANDLING SCRIPT
+     Displays backend validation errors
+========================================= -->
 <script>
 const params = new URLSearchParams(window.location.search);
 const error = params.get('error');
 
 if (error) {
     const box = document.getElementById('errorBox');
+
+    // Show error container
     box.style.display = 'block';
-    box.innerHTML = error.split(" | ").map(e => "• " + e).join("<br>");
+
+    // Format multiple errors nicely
+    box.innerHTML = error
+        .split(" | ")
+        .map(e => "• " + e)
+        .join("<br>");
 }
 </script>
 

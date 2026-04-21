@@ -1,7 +1,9 @@
 <?php
 include '../PHP/db.php';
 
-// Get recent lessons
+// =========================================
+// FETCH RECENT LESSONS (LIMIT 5)
+// =========================================
 $result = $conn->query("
 SELECT l.LessonID, s.FirstName AS Student, t.FirstName AS Tutor, l.LessonDate
 FROM Lessons l
@@ -11,7 +13,6 @@ ORDER BY l.LessonDate DESC
 LIMIT 5
 ");
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,13 +36,13 @@ LIMIT 5
 
 <h2>Lesson Management</h2>
 
-<!-- ACTIONS -->
+<!-- QUICK ACTION BUTTONS -->
 <div style="display:flex; gap:15px;">
     <a href="/TUTORLINK/Lessons/AddLesson.php"><button>Book Lesson</button></a>
     <a href="/TUTORLINK/Lessons/ViewLessons.php"><button>View All</button></a>
 </div>
 
-<!-- LIVE PREVIEW -->
+<!-- RECENT LESSONS PREVIEW -->
 <h3 style="margin-top:30px;">Recent Lessons</h3>
 
 <table>

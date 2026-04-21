@@ -1,10 +1,41 @@
 <?php
+// =========================================
+// DB CONNECTION
+// =========================================
 include '../PHP/db.php';
 
+// Get tutor ID from URL
 $id = $_GET['id'];
 
+// =========================================
+// FETCH TUTOR INFO
+// =========================================
 $result = $conn->query("SELECT * FROM Tutors WHERE TutorIndex = $id");
 $row = $result->fetch_assoc();
+
+// =========================================
+// FETCH ALL COURSES (FOR LEFT BOX)
+// =========================================
+$courses = $conn->query("
+    SELECT CourseIndex, CoursePrefix, CourseNumber, CourseName
+    FROM Courses 
+    ORDER BY CoursePrefix, CourseNumber
+");
+
+// =========================================
+// FETCH CURRENT SPECIALIZATIONS
+// =========================================
+$current = $conn->query("
+    SELECT CourseIndex 
+    FROM TutorCourses 
+    WHERE TutorIndex = $id
+");
+
+// Store selected course IDs in array
+$selected = [];
+while ($c = $current->fetch_assoc()) {
+    $selected[] = $c['CourseIndex'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,56 +48,140 @@ $row = $result->fetch_assoc();
 <body>
 
 <div class="container">
-
 <h2>Edit Tutor</h2>
 
+<!-- =========================================
+     MAIN UPDATE FORM
+========================================= -->
 <form action="/TUTORLINK/PHP/updateTutor.php" method="post">
 
-<input type="hidden" name="id" value="<?php echo $row['TutorIndex']; ?>">
+<!-- Hidden ID -->
+<input type="hidden" name="id" value="<?= $row['TutorIndex']; ?>">
 
+<!-- BASIC INFO -->
 <label>First Name</label>
-<input type="text" name="firstName" value="<?php echo $row['FirstName']; ?>" required>
+<input type="text" name="firstName" value="<?= $row['FirstName']; ?>" required>
 
 <label>Surname</label>
-<input type="text" name="surname" value="<?php echo $row['Surname']; ?>">
+<input type="text" name="surname" value="<?= $row['Surname']; ?>">
 
 <label>Age</label>
-<input type="number" name="age" value="<?php echo $row['Age']; ?>" required>
+<input type="number" name="age" value="<?= $row['Age']; ?>" required>
 
 <label>Phone</label>
-<input type="text" name="phone" value="<?php echo $row['PhoneNumber']; ?>">
+<input type="text" name="phone" value="<?= $row['PhoneNumber']; ?>">
 
 <label>Email</label>
-<input type="email" name="email" value="<?php echo $row['Email']; ?>">
+<input type="email" name="email" value="<?= $row['Email']; ?>">
 
 <label>Tutor Type</label>
 <select name="tutorType">
-    <option value="UTD" <?php if ($row['TutorType']=="UTD") echo "selected"; ?>>UTD</option>
-    <option value="External" <?php if ($row['TutorType']=="External") echo "selected"; ?>>External</option>
+    <option value="UTD" <?= $row['TutorType']=="UTD" ? "selected" : "" ?>>UTD</option>
+    <option value="External" <?= $row['TutorType']=="External" ? "selected" : "" ?>>External</option>
 </select>
 
-<!-- UTD Fields -->
-<label>NetID</label>
-<input type="text" name="netid" value="<?php echo $row['NetID']; ?>">
+<!-- =========================================
+     DUAL LIST (COURSE MANAGEMENT)
+========================================= -->
+<h3>Courses of Specialization</h3>
 
-<label>Comet ID</label>
-<input type="text" name="cometid" value="<?php echo $row['CometID']; ?>">
+<!-- Search filter -->
+<label>Search Courses</label>
+<input type="text" id="searchCourses" onkeyup="filterCourses()" placeholder="Search...">
 
-<!-- External Fields -->
-<label>Tutor ID</label>
-<input type="text" name="tutorid" value="<?php echo $row['TutorID']; ?>">
+<div class="dual-list">
 
-<label>Company</label>
-<input type="text" name="company" value="<?php echo $row['Company']; ?>">
+    <!-- AVAILABLE COURSES -->
+    <div>
+        <label>Available</label>
+        <select id="allCourses" size="12" multiple>
+        <?php while($course = $courses->fetch_assoc()): ?>
+            <?php if (!in_array($course['CourseIndex'], $selected)): ?>
+                <option value="<?= $course['CourseIndex'] ?>">
+                    <?= $course['CoursePrefix'] . " " . $course['CourseNumber'] . " - " . $course['CourseName'] ?>
+                </option>
+            <?php endif; ?>
+        <?php endwhile; ?>
+        </select>
+    </div>
 
-<label>Other</label>
-<input type="text" name="other" value="<?php echo $row['Other']; ?>">
+    <!-- MOVE BUTTONS -->
+    <div class="dual-buttons">
+        <button type="button" onclick="addCourse()">Add &gt;</button>
+        <button type="button" onclick="removeCourse()">&lt; Remove</button>
+    </div>
+
+    <!-- SELECTED COURSES -->
+    <div>
+        <label>Selected</label>
+        <select id="selectedCourses" name="courses[]" size="12" multiple>
+        <?php
+        // rewind result pointer to reuse
+        $courses->data_seek(0);
+
+        while($course = $courses->fetch_assoc()):
+            if (in_array($course['CourseIndex'], $selected)):
+        ?>
+            <option value="<?= $course['CourseIndex'] ?>">
+                <?= $course['CoursePrefix'] . " " . $course['CourseNumber'] . " - " . $course['CourseName'] ?>
+            </option>
+        <?php endif; endwhile; ?>
+        </select>
+    </div>
+
+</div>
 
 <button type="submit">Update Tutor</button>
 
 </form>
-
 </div>
+
+<script>
+// =========================================
+// MOVE ITEMS BETWEEN LISTS
+// =========================================
+function addCourse() {
+    moveOptions("allCourses", "selectedCourses");
+}
+
+function removeCourse() {
+    moveOptions("selectedCourses", "allCourses");
+}
+
+function moveOptions(from, to) {
+    const fromBox = document.getElementById(from);
+    const toBox = document.getElementById(to);
+
+    Array.from(fromBox.selectedOptions).forEach(option => {
+        option.selected = true; // ensures it gets submitted
+        toBox.appendChild(option);
+    });
+}
+
+// =========================================
+// CRITICAL: ENSURE ALL SELECTED COURSES SUBMIT
+// =========================================
+document.querySelector("form").addEventListener("submit", function () {
+    const selected = document.getElementById("selectedCourses").options;
+
+    for (let i = 0; i < selected.length; i++) {
+        selected[i].selected = true;
+    }
+});
+
+// =========================================
+// SEARCH FILTER (AVAILABLE COURSES ONLY)
+// =========================================
+function filterCourses() {
+    let input = document.getElementById("searchCourses").value.toLowerCase();
+    let options = document.getElementById("allCourses").options;
+
+    for (let i = 0; i < options.length; i++) {
+        let text = options[i].text.toLowerCase();
+        options[i].style.display = text.includes(input) ? "" : "none";
+    }
+}
+</script>
 
 </body>
 </html>

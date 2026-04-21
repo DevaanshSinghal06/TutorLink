@@ -1,6 +1,12 @@
 <?php
+// =========================================
+// DATABASE CONNECTION
+// =========================================
 include '../PHP/db.php';
 
+// =========================================
+// FETCH STUDENT BY ID
+// =========================================
 $id = $_GET['id'];
 
 $result = $conn->query("SELECT * FROM Students WHERE StudentIndex = $id");
@@ -16,16 +22,23 @@ $row = $result->fetch_assoc();
 
 <body>
 
+<!-- TOP BAR -->
 <div class="top-bar">The University of Texas at Dallas</div>
 
 <div class="container">
 
 <h2>Edit Student</h2>
 
+<!-- =========================================
+     EDIT FORM
+     Sends updated data to backend
+========================================= -->
 <form action="/TUTORLINK/PHP/updateStudent.php" method="post">
 
+<!-- Hidden ID for update query -->
 <input type="hidden" name="id" value="<?php echo $row['StudentIndex']; ?>">
 
+<!-- Editable fields -->
 <label>First Name</label>
 <input type="text" name="firstName" value="<?php echo $row['FirstName']; ?>" required>
 
@@ -44,7 +57,10 @@ $row = $result->fetch_assoc();
 <label>Graduation Year</label>
 <input type="number" name="gradyear" value="<?php echo $row['GradYear']; ?>">
 
-<!-- 🔒 READ ONLY -->
+<!-- =========================================
+     READ-ONLY FIELDS (IDENTIFIERS)
+     Cannot be changed after creation
+========================================= -->
 <label>NetID</label>
 <input type="text" value="<?php echo $row['NetID']; ?>" readonly>
 

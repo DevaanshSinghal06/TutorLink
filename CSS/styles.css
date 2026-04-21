@@ -1,11 +1,17 @@
-/* RESET */
+/* =========================================
+   RESET / BASE
+========================================= */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
 }
 
-/* TOP BAR */
+/* =========================================
+   LAYOUT
+========================================= */
+
+/* Top bar */
 .top-bar {
     background-color: #154734;
     height: 40px;
@@ -16,7 +22,7 @@ body {
     font-weight: bold;
 }
 
-/* NAVBAR */
+/* Navbar */
 .navbar {
     background-color: white;
     border-bottom: 2px solid #ddd;
@@ -34,7 +40,7 @@ body {
     color: #e87500;
 }
 
-/* MAIN CONTAINER */
+/* Main container */
 .container {
     width: 90%;
     max-width: 1100px;
@@ -44,13 +50,19 @@ body {
     border: 1px solid #ddd;
 }
 
-/* HEADINGS */
+/* =========================================
+   TYPOGRAPHY
+========================================= */
+
 h2 {
     margin-bottom: 20px;
     color: #333;
 }
 
-/* FORM */
+/* =========================================
+   FORM STRUCTURE
+========================================= */
+
 form {
     display: flex;
     flex-direction: column;
@@ -60,7 +72,7 @@ form {
     box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
 
-/* INPUTS */
+/* Inputs */
 input, select {
     padding: 10px;
     margin-top: 10px;
@@ -68,19 +80,38 @@ input, select {
     border: 1px solid #ccc;
 }
 
+/* Grouping */
 .schedule-section {
-    margin-top: 25px; /* creates intentional separation */
+    margin-top: 25px;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: column;
 }
 
 .date-group input {
-    margin-bottom: 5px;   /* reduce from 15px */
+    margin-bottom: 5px;
 }
 
 .date-group .inline-button {
-    margin-top: 5px;      /* tighten spacing further */
+    margin-top: 5px;
 }
 
-/* BUTTON (GLOBAL PRIMARY BUTTON) */
+/* Small helper text */
+.duration-note {
+    font-size: 13px;
+    color: #777;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+/* Primary button */
 button {
     margin-top: 20px;
     padding: 12px;
@@ -97,21 +128,17 @@ button:hover {
     opacity: 0.9;
 }
 
-.duration-note {
-    font-size: 13px;
-    color: #777;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    font-style: italic;
-}
-
-/* INLINE BUTTON (for "Check Availability") */
+/* Inline button (availability) */
 .inline-button {
-    margin-top: 8px;              /* override global 20px */
+    margin-top: 8px;
     padding: 8px 14px;
     font-size: 14px;
-    width: fit-content;           /* prevents full-width stretch */
+    width: fit-content;
 }
+
+/* =========================================
+   AVAILABILITY COMPONENT
+========================================= */
 
 .availability-box {
     margin-top: 15px;
@@ -121,13 +148,36 @@ button:hover {
     border-radius: 5px;
 }
 
-/* OPTIONAL: GROUP DATE + BUTTON CLEANLY */
-.date-group {
+/* Grid layout for time slots */
+.time-grid {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-/* TABLE */
+/* Time slot buttons */
+.time-slot {
+    padding: 6px 10px;
+    background-color: #154734;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.time-slot:hover {
+    background-color: #e87500;
+}
+
+.time-slot.selected {
+    background-color: #154734;
+    color: white;
+}
+
+/* =========================================
+   TABLES
+========================================= */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -135,7 +185,6 @@ table {
     background-color: white;
 }
 
-/* HEADERS */
 th {
     background-color: #154734;
     color: white;
@@ -143,26 +192,28 @@ th {
     text-align: center;
 }
 
-/* CELLS */
 td {
     padding: 12px;
     border: 1px solid #ddd;
     text-align: center;
 }
 
-/* ROW HOVER */
 tr:hover {
     background-color: #f9f9f9;
 }
 
-/* ACTION COLUMN */
+/* Action column */
 .action-col {
     text-align: center;
     width: 180px;
     white-space: nowrap;
 }
 
-/* TOAST */
+/* =========================================
+   FEEDBACK (TOAST / ERROR)
+========================================= */
+
+/* Success toast */
 .toast {
     position: fixed;
     bottom: 20px;
@@ -184,7 +235,7 @@ tr:hover {
     transform: translateY(0);
 }
 
-/* ERROR */
+/* Error message */
 .error {
     background-color: #ffe5e5;
     color: #b30000;
@@ -195,14 +246,16 @@ tr:hover {
     font-weight: bold;
 }
 
-/* ACTION LINKS */
+/* =========================================
+   ACTION LINKS
+========================================= */
+
 td .action-link {
     text-decoration: none !important;
     font-weight: bold;
     margin: 0 5px;
 }
 
-/* COLORS */
 td .action-link.delete {
     color: #e53935 !important;
 }
@@ -215,12 +268,14 @@ td .action-link.noshow {
     color: #555 !important;
 }
 
-/* HOVER */
 td .action-link:hover {
     text-decoration: underline;
 }
 
-/* STATUS */
+/* =========================================
+   STATUS COLORS
+========================================= */
+
 .status {
     font-weight: bold;
 }
@@ -245,26 +300,31 @@ td .action-link:hover {
     color: #555;
 }
 
-.time-grid {
+/* =========================================
+   DUAL LIST (Tutor Course Selection)
+========================================= */
+
+.dual-list {
     display: flex;
-    flex-wrap: wrap;     /* allows wrapping to next line */
-    gap: 8px;            /* spacing between buttons */
+    gap: 25px;
+    align-items: center;
+    margin-top: 15px;
 }
 
-.time-slot {
-    padding: 6px 10px;
-    background-color: #154734;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.dual-list select {
+    width: auto;
+    height: auto;
 }
 
-.time-slot:hover {
-    background-color: #e87500;
+.dual-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.time-slot.selected {
-    background-color: #154734;
-    color: white;
+.dual-buttons button {
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0;
 }

@@ -1,40 +1,47 @@
 <?php
 include '../PHP/db.php';
 
-// =========================
-// GET FILTER INPUTS
-// =========================
+// =========================================
+// FILTER INPUTS
+// =========================================
 $name = $_GET['name'] ?? '';
 $type = $_GET['type'] ?? '';
 
-// =========================
-// BASE QUERY
-// =========================
+// =========================================
+// BASE QUERY (WITH COURSE AGGREGATION)
+// =========================================
 $sql = "
-SELECT t.TutorIndex, t.FirstName, t.Surname, t.TutorType,
-       GROUP_CONCAT(c.CoursePrefix, ' ', c.CourseNumber SEPARATOR ', ') AS Courses
+SELECT 
+    t.TutorIndex, 
+    t.FirstName, 
+    t.Surname, 
+    t.TutorType,
+    GROUP_CONCAT(CONCAT(c.CoursePrefix, ' ', c.CourseNumber) SEPARATOR ', ') AS Courses
 FROM Tutors t
-LEFT JOIN TutorSpecializations ts ON t.TutorIndex = ts.TutorIndex
-LEFT JOIN Courses c ON ts.CourseIndex = c.CourseIndex
+LEFT JOIN TutorCourses tc ON t.TutorIndex = tc.TutorIndex
+LEFT JOIN Courses c ON tc.CourseIndex = c.CourseIndex
 WHERE 1=1
 ";
 
-// =========================
-// APPLY FILTERS
-// =========================
+// =========================================
+// APPLY SEARCH FILTER (NAME)
+// =========================================
 if (!empty($name)) {
     $name = $conn->real_escape_string($name);
     $sql .= " AND (t.FirstName LIKE '%$name%' OR t.Surname LIKE '%$name%')";
 }
 
+// =========================================
+// APPLY TYPE FILTER
+// =========================================
 if (!empty($type)) {
     $type = $conn->real_escape_string($type);
     $sql .= " AND t.TutorType = '$type'";
 }
 
-// =========================
-// GROUPING
-// =========================
+// =========================================
+// GROUP RESULTS BY TUTOR
+// =========================================
 $sql .= " GROUP BY t.TutorIndex";
 
 $result = $conn->query($sql);
@@ -50,8 +57,10 @@ $result = $conn->query($sql);
 
 <body>
 
+<!-- HEADER -->
 <div class="top-bar">The University of Texas at Dallas</div>
 
+<!-- NAV -->
 <div class="navbar">
     <a href="/TUTORLINK/Dashboard.php">Home</a>
     <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
@@ -63,19 +72,24 @@ $result = $conn->query($sql);
 
 <h2>All Tutors</h2>
 
-<!-- 🔥 SEARCH FORM -->
+<!-- =========================================
+     FILTER FORM
+========================================= -->
 <form method="get">
-    <input type="text" name="name" placeholder="Search name" value="<?php echo htmlspecialchars($name); ?>">
+    <input type="text" name="name" placeholder="Search name" value="<?= htmlspecialchars($name); ?>">
 
     <select name="type">
         <option value="">All Types</option>
-        <option value="UTD" <?php if ($type == "UTD") echo "selected"; ?>>UTD</option>
-        <option value="External" <?php if ($type == "External") echo "selected"; ?>>External</option>
+        <option value="UTD" <?= $type=="UTD" ? "selected" : "" ?>>UTD</option>
+        <option value="External" <?= $type=="External" ? "selected" : "" ?>>External</option>
     </select>
 
     <button type="submit">Search</button>
 </form>
 
+<!-- =========================================
+     TUTOR TABLE
+========================================= -->
 <table>
 <tr>
     <th>Name</th>
@@ -86,25 +100,35 @@ $result = $conn->query($sql);
 
 <?php while($row = $result->fetch_assoc()): ?>
 <tr>
-    <td><?php echo $row['FirstName'] . " " . $row['Surname']; ?></td>
-    <td><?php echo $row['TutorType']; ?></td>
-    <td><?php echo $row['Courses'] ?? "None"; ?></td>
-    <td class="action-col">
 
-        <a href="/TUTORLINK/Tutors/EditTutor.php?id=<?php echo $row['TutorIndex']; ?>"
-        class="action-link">
+<td><?= $row['FirstName'] . " " . $row['Surname']; ?></td>
+
+<td><?= $row['TutorType']; ?></td>
+
+<td>
+<?php 
+    echo !empty($row['Courses']) 
+        ? $row['Courses'] 
+        : "<i>No specializations</i>";
+?>
+</td>
+
+<td class="action-col">
+
+    <a href="/TUTORLINK/Tutors/EditTutor.php?id=<?= $row['TutorIndex']; ?>" class="action-link">
         Edit
-        </a>
+    </a>
 
-        <span class="divider">|</span>
+    <span class="divider">|</span>
 
-        <a href="/TUTORLINK/PHP/deleteTutor.php?id=<?php echo $row['TutorIndex']; ?>"
-        onclick="return confirm('Are you sure you want to delete this tutor?');"
-        class="action-link delete">
+    <a href="/TUTORLINK/PHP/deleteTutor.php?id=<?= $row['TutorIndex']; ?>"
+       onclick="return confirm('Are you sure you want to delete this tutor?');"
+       class="action-link delete">
         Delete
-        </a>
+    </a>
 
-    </td>
+</td>
+
 </tr>
 <?php endwhile; ?>
 
@@ -116,6 +140,7 @@ $result = $conn->query($sql);
 <div id="successToast" class="toast"></div>
 
 <script>
+// Show success toast if redirected with message
 const params = new URLSearchParams(window.location.search);
 const success = params.get('success');
 

@@ -1,5 +1,12 @@
 <?php
+// =========================================
+// DATABASE CONNECTION
+// =========================================
 include '../PHP/db.php';
+
+// =========================================
+// FETCH ALL STUDENTS
+// =========================================
 $result = $conn->query("SELECT * FROM Students");
 ?>
 
@@ -12,7 +19,7 @@ $result = $conn->query("SELECT * FROM Students");
 
 <body>
 
-<!-- UTD TOP BAR -->
+<!-- TOP BAR -->
 <div class="top-bar">
     The University of Texas at Dallas
 </div>
@@ -29,6 +36,9 @@ $result = $conn->query("SELECT * FROM Students");
 
 <h2>Student List</h2>
 
+<!-- =========================================
+     STUDENT TABLE
+========================================= -->
 <table>
 <tr>
     <th>First Name</th>
@@ -44,30 +54,41 @@ $result = $conn->query("SELECT * FROM Students");
 
 <?php while($row = $result->fetch_assoc()) { ?>
 <tr>
+
+    <!-- Basic Info -->
     <td><?php echo $row['FirstName']; ?></td>
     <td><?php echo $row['Surname']; ?></td>
     <td><?php echo $row['Age']; ?></td>
+
+    <!-- Contact -->
     <td><?php echo $row['Email']; ?></td>
     <td><?php echo $row['PhoneNumber']; ?></td>
+
+    <!-- University Identifiers -->
     <td><?php echo $row['NetID']; ?></td>
     <td><?php echo $row['CometID']; ?></td>
+
+    <!-- Academic -->
     <td><?php echo $row['GradYear']; ?></td>
+
+    <!-- Actions -->
     <td class="action-col">
 
         <a href="/TUTORLINK/Students/EditStudent.php?id=<?php echo $row['StudentIndex']; ?>"
-        class="action-link">
-        Edit
+           class="action-link">
+            Edit
         </a>
 
         <span class="divider">|</span>
 
         <a href="/TUTORLINK/PHP/deleteStudent.php?id=<?php echo $row['StudentIndex']; ?>"
-        onclick="return confirm('Are you sure you want to delete this student?');"
-        class="action-link delete">
-        Delete
+           onclick="return confirm('Are you sure you want to delete this student?');"
+           class="action-link delete">
+            Delete
         </a>
 
     </td>
+
 </tr>
 <?php } ?>
 
@@ -75,7 +96,9 @@ $result = $conn->query("SELECT * FROM Students");
 
 </div>
 
-<!-- SUCCESS TOAST -->
+<!-- =========================================
+     SUCCESS TOAST (FEEDBACK)
+========================================= -->
 <div id="successToast" class="toast"></div>
 
 <script>
@@ -85,13 +108,9 @@ const success = params.get('success');
 if (success) {
     const toast = document.getElementById('successToast');
 
-    // Add checkmark + message
     toast.innerHTML = "✔️ " + success;
-
-    // Show with animation
     toast.classList.add('show');
 
-    // Fade out after 3 seconds
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);

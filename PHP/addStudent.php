@@ -1,44 +1,55 @@
 <?php
+// =========================================
+// DEBUGGING
+// =========================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_OFF);
 
+// DB connection
 include 'db.php';
 
-// Get form data
+// =========================================
+// GET FORM DATA
+// =========================================
 $firstName = $_POST['firstName'];
-$surname = $_POST['surname'];
-$age = $_POST['age'];
-$phone = $_POST['phone'];
-$email = $_POST['email'];
-$netid = $_POST['netid'];
-$cometid = $_POST['cometid'];
-$gradyear = $_POST['gradyear'];
+$surname   = $_POST['surname'];
+$age       = $_POST['age'];
+$phone     = $_POST['phone'];
+$email     = $_POST['email'];
+$netid     = $_POST['netid'];
+$cometid   = $_POST['cometid'];
+$gradyear  = $_POST['gradyear'];
 
-// Generate StudentIndex automatically
+// =========================================
+// GENERATE STUDENT ID
+// =========================================
 $result = $conn->query("SELECT MAX(StudentIndex) AS maxID FROM Students");
 $row = $result->fetch_assoc();
 $newID = $row['maxID'] + 1;
 
-// =========================
+// =========================================
 // BASIC VALIDATION
-// =========================
+// =========================================
+
+// Must have at least one identifier
 if (empty($netid) && empty($cometid)) {
     header("Location: /TUTORLINK/Students/AddStudents.html?error=Provide NetID or CometID");
     exit();
 }
 
+// Must have at least one contact method
 if (empty($phone) && empty($email)) {
     header("Location: /TUTORLINK/Students/AddStudents.html?error=Provide Email or Phone");
     exit();
 }
 
-// =========================
-// DUPLICATE CHECKS (NEW)
-// =========================
+// =========================================
+// DUPLICATE CHECKS
+// =========================================
 $errors = [];
 
-// Check NetID
+// NetID uniqueness
 if (!empty($netid)) {
     $check = $conn->query("SELECT 1 FROM Students WHERE NetID = '$netid'");
     if ($check->num_rows > 0) {
@@ -46,7 +57,7 @@ if (!empty($netid)) {
     }
 }
 
-// Check CometID
+// CometID uniqueness
 if (!empty($cometid)) {
     $check = $conn->query("SELECT 1 FROM Students WHERE CometID = '$cometid'");
     if ($check->num_rows > 0) {
@@ -54,7 +65,7 @@ if (!empty($cometid)) {
     }
 }
 
-// Check Email (optional uniqueness)
+// Email uniqueness
 if (!empty($email)) {
     $check = $conn->query("SELECT 1 FROM Students WHERE Email = '$email'");
     if ($check->num_rows > 0) {
@@ -62,33 +73,31 @@ if (!empty($email)) {
     }
 }
 
-// If ANY errors → send ALL back
+// Return all errors at once
 if (!empty($errors)) {
     $errorString = implode(" | ", $errors);
     header("Location: /TUTORLINK/Students/AddStudents.html?error=" . urlencode($errorString));
     exit();
 }
 
-// =========================
-// HANDLE EMPTY VALUES → NULL
-// =========================
-$netid = empty($netid) ? "NULL" : "'$netid'";
-$cometid = empty($cometid) ? "NULL" : "'$cometid'";
-$phone = empty($phone) ? "NULL" : "'$phone'";
-$email = empty($email) ? "NULL" : "'$email'";
-$gradyear = empty($gradyear) ? "NULL" : $gradyear;
+// =========================================
+// HANDLE NULL VALUES
+// =========================================
+$netid    = empty($netid)   ? "NULL" : "'$netid'";
+$cometid  = empty($cometid) ? "NULL" : "'$cometid'";
+$phone    = empty($phone)   ? "NULL" : "'$phone'";
+$email    = empty($email)   ? "NULL" : "'$email'";
+$gradyear = empty($gradyear)? "NULL" : $gradyear;
 
-// =========================
-// INSERT QUERY
-// =========================
+// =========================================
+// INSERT STUDENT
+// =========================================
 $sql = "INSERT INTO Students 
 (StudentIndex, FirstName, Surname, Age, PhoneNumber, Email, NetID, CometID, GradYear)
 VALUES 
 ($newID, '$firstName', '$surname', $age, $phone, $email, $netid, $cometid, $gradyear)";
 
-// =========================
-// EXECUTE
-// =========================
+// Execute
 if ($conn->query($sql) === TRUE) {
     header("Location: /TUTORLINK/Dashboard.php?success=Student added successfully");
     exit();

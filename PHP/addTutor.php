@@ -1,13 +1,16 @@
 <?php
+// =========================================
+// DEBUGGING
+// =========================================
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_OFF);
 
 include 'db.php';
 
-// =========================
-// GET FORM DATA (SAFE)
-// =========================
+// =========================================
+// GET FORM DATA (SAFE DEFAULTS)
+// =========================================
 $firstName = $_POST['firstName'] ?? '';
 $surname   = $_POST['surname'] ?? '';
 $age       = $_POST['age'] ?? 0;
@@ -23,9 +26,9 @@ $other   = $_POST['other'] ?? null;
 
 $courses = $_POST['courses'] ?? [];
 
-// =========================
+// =========================================
 // VALIDATION
-// =========================
+// =========================================
 if (empty($courses)) {
     header("Location: /TUTORLINK/Tutors/AddTutorStep1.html?error=Select at least one course");
     exit();
@@ -36,16 +39,16 @@ if (empty($tutorType)) {
     exit();
 }
 
-// =========================
-// GENERATE TutorIndex (SAFE)
-// =========================
+// =========================================
+// GENERATE TutorIndex
+// =========================================
 $result = $conn->query("SELECT MAX(TutorIndex) AS maxID FROM Tutors");
 $row = $result->fetch_assoc();
 $newID = ($row['maxID'] ?? 0) + 1;
 
-// =========================
+// =========================================
 // HANDLE NULL VALUES
-// =========================
+// =========================================
 $netid   = empty($netid)   ? "NULL" : "'$netid'";
 $cometid = empty($cometid) ? "NULL" : "'$cometid'";
 $tutorid = empty($tutorid) ? "NULL" : "'$tutorid'";
@@ -54,9 +57,9 @@ $other   = empty($other)   ? "NULL" : "'$other'";
 $phone   = empty($phone)   ? "NULL" : "'$phone'";
 $email   = empty($email)   ? "NULL" : "'$email'";
 
-// =========================
-// INSERT INTO Tutors
-// =========================
+// =========================================
+// INSERT TUTOR
+// =========================================
 $sql = "INSERT INTO Tutors 
 (TutorIndex, FirstName, Surname, Age, PhoneNumber, Email, TutorType, NetID, CometID, TutorID, Company, Other)
 VALUES 
@@ -64,17 +67,17 @@ VALUES
 
 if ($conn->query($sql) === TRUE) {
 
-    // =========================
-    // INSERT SPECIALIZATIONS
-    // =========================
+    // =========================================
+    // INSERT SPECIALIZATIONS (JUNCTION TABLE)
+    // =========================================
     foreach ($courses as $course) {
-        $conn->query("INSERT INTO TutorSpecializations (TutorIndex, CourseIndex)
-                      VALUES ($newID, $course)");
+        $conn->query("
+            INSERT INTO TutorSpecializations (TutorIndex, CourseIndex)
+            VALUES ($newID, $course)
+        ");
     }
 
-    // =========================
-    // REDIRECT TO VIEW TUTOR
-    // =========================
+    // Success redirect
     header("Location: /TUTORLINK/Tutors/ViewTutor.php?success=Tutor added successfully");
     exit();
 

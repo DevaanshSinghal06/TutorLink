@@ -1,19 +1,22 @@
 <?php
 include 'db.php';
 
-// =========================
-// CASE 1: STATUS UPDATE (GET)
-// =========================
+// =========================================
+// CASE 1: STATUS UPDATE (GET REQUEST)
+// =========================================
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
+    // Get parameters
     $id = $_GET['id'] ?? null;
     $status = $_GET['status'] ?? null;
 
+    // Validate inputs
     if (!$id || !$status) {
         header("Location: /TUTORLINK/Lessons/ViewLessons.php?error=Invalid request");
         exit();
     }
 
+    // Only allow specific status changes
     $allowed = ["Cancelled", "No Show"];
 
     if (!in_array($status, $allowed)) {
@@ -21,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit();
     }
 
+    // Update lesson status
     $conn->query("UPDATE Lessons SET Status='$status' WHERE LessonID=$id");
 
     header("Location: /TUTORLINK/Lessons/ViewLessons.php?success=Lesson updated successfully");
@@ -28,20 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 
-// =========================
-// CASE 2: RESCHEDULE (POST)
-// =========================
+// =========================================
+// CASE 2: RESCHEDULE LESSON (POST REQUEST)
+// =========================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    // Get form data
     $id       = $_POST['id'] ?? null;
     $date     = $_POST['lessonDate'] ?? null;
     $start    = $_POST['startTime'] ?? null;
     $duration = $_POST['duration'] ?? null;
     $location = $_POST['locationIndex'] ?? null;
 
-    // =========================
+    // =========================================
     // VALIDATION
-    // =========================
+    // =========================================
     if (!$id || !$date || !$start || !$duration || !$location) {
         header("Location: /TUTORLINK/Lessons/ViewLessons.php?error=Missing fields");
         exit();
@@ -52,14 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // =========================
+    // =========================================
     // CALCULATE END TIME
-    // =========================
+    // =========================================
     $end = date("H:i:s", strtotime("+$duration minutes", strtotime($start)));
 
-    // =========================
-    // 🔥 GET TUTOR FOR THIS LESSON
-    // =========================
+    // =========================================
+    // GET TUTOR FOR THIS LESSON
+    // =========================================
     $res = $conn->query("SELECT TutorIndex FROM Lessons WHERE LessonID = $id");
     $tutorRow = $res->fetch_assoc();
 
@@ -70,9 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $tutor = $tutorRow['TutorIndex'];
 
-    // =========================
-    // 🔥 CONFLICT CHECK (EXCLUDE CURRENT LESSON)
-    // =========================
+    // =========================================
+    // CONFLICT CHECK: TUTOR
+    // =========================================
     $conflictSQL = "
     SELECT 1 FROM Lessons
     WHERE TutorIndex = $tutor
@@ -88,9 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // =========================
-    // 🔥 OPTIONAL: LOCATION CONFLICT CHECK
-    // =========================
+    // =========================================
+    // CONFLICT CHECK: LOCATION
+    // =========================================
     $locationConflictSQL = "
     SELECT 1 FROM Lessons
     WHERE LocationIndex = $location
@@ -106,9 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // =========================
+    // =========================================
     // UPDATE LESSON
-    // =========================
+    // =========================================
     $sql = "UPDATE Lessons SET
         LessonDate='$date',
         StartTime='$start',
@@ -119,11 +124,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($conn->query($sql) === TRUE) {
         header("Location: /TUTORLINK/Lessons/ViewLessons.php?success=Lesson rescheduled successfully");
-        exit();
     } else {
         $error = urlencode($conn->error);
         header("Location: /TUTORLINK/Lessons/ViewLessons.php?error=$error");
-        exit();
     }
+
+    exit();
 }
 ?>

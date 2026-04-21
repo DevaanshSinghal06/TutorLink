@@ -1,7 +1,9 @@
 <?php
 include '../PHP/db.php';
 
-// Get recent tutors
+// =========================================
+// FETCH RECENT TUTORS (LIMIT 5)
+// =========================================
 $result = $conn->query("
 SELECT TutorIndex, FirstName, Surname, TutorType
 FROM Tutors
@@ -20,8 +22,10 @@ LIMIT 5
 
 <body>
 
+<!-- HEADER -->
 <div class="top-bar">TutorLink - Tutors</div>
 
+<!-- NAV -->
 <div class="navbar">
     <a href="/TUTORLINK/Dashboard.php">Home</a>
     <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
@@ -33,13 +37,13 @@ LIMIT 5
 
 <h2>Tutor Management</h2>
 
-<!-- ACTIONS -->
+<!-- QUICK ACTIONS -->
 <div style="display:flex; gap:15px;">
     <a href="/TUTORLINK/Tutors/AddTutorStep1.html"><button>Add Tutor</button></a>
     <a href="/TUTORLINK/Tutors/ViewTutor.php"><button>View All</button></a>
 </div>
 
-<!-- LIVE PREVIEW -->
+<!-- RECENT TUTORS TABLE -->
 <h3 style="margin-top:30px;">Recent Tutors</h3>
 
 <table>
@@ -51,10 +55,10 @@ LIMIT 5
 
 <?php while($row = $result->fetch_assoc()): ?>
 <tr>
-<td><?php echo $row['FirstName'] . " " . $row['Surname']; ?></td>
-<td><?php echo $row['TutorType']; ?></td>
+<td><?= $row['FirstName'] . " " . $row['Surname']; ?></td>
+<td><?= $row['TutorType']; ?></td>
 <td>
-    <a href="/TUTORLINK/Tutors/EditTutor.php?id=<?php echo $row['TutorIndex']; ?>" class="action-link">
+    <a href="/TUTORLINK/Tutors/EditTutor.php?id=<?= $row['TutorIndex']; ?>" class="action-link">
         Edit
     </a>
 </td>

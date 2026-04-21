@@ -1,10 +1,16 @@
 <?php
+// =========================================
+// DATABASE CONNECTION
+// =========================================
 require_once '../PHP/db.php';
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// =========================================
+// FETCH COURSES
+// =========================================
 $sql = "SELECT CourseIndex, CoursePrefix, CourseNumber, CourseName 
         FROM Courses 
         ORDER BY CoursePrefix, CourseNumber";
@@ -38,9 +44,12 @@ if (!$result) {
 
 <h2>UTD Tutor Details</h2>
 
+<!-- =========================================
+     STEP 2 FORM (UTD VERSION)
+========================================= -->
 <form action="/TUTORLINK/PHP/addTutor.php" method="post">
 
-    <!-- Hidden fields -->
+    <!-- Hidden Step 1 fields -->
     <input type="hidden" name="firstName" id="firstName">
     <input type="hidden" name="surname" id="surname">
     <input type="hidden" name="age" id="age">
@@ -48,7 +57,7 @@ if (!$result) {
     <input type="hidden" name="email" id="email">
     <input type="hidden" name="tutorType" value="UTD">
 
-    <!-- UTD fields -->
+    <!-- UTD-specific fields -->
     <label>NetID</label>
     <input type="text" name="netid" required>
 
@@ -71,7 +80,7 @@ if (!$result) {
         <option value="PSY">PSY</option>
     </select>
 
-    <!-- Courses -->
+    <!-- Multi-select courses -->
     <p><i>Hold Command (Mac) or Ctrl (Windows) to select multiple courses</i></p>
 
     <label>Courses Taught</label>
@@ -92,13 +101,18 @@ if (!$result) {
 </div>
 
 <script>
-// Transfer Step 1 data
+// =========================================
+// TRANSFER STEP 1 DATA
+// =========================================
 const params = new URLSearchParams(window.location.search);
+
 ["firstName","surname","age","phone","email"].forEach(id => {
     document.getElementById(id).value = params.get(id) || '';
 });
 
-// Search filter
+// =========================================
+// FILTERING LOGIC (SAME AS EXTERNAL)
+// =========================================
 function filterCourses() {
     let input = document.getElementById("searchBox").value.toLowerCase();
     let options = document.getElementById("courseSelect").options;
@@ -109,7 +123,6 @@ function filterCourses() {
     }
 }
 
-// Prefix filter
 function filterByPrefix() {
     let prefix = document.getElementById("prefixFilter").value;
     let options = document.getElementById("courseSelect").options;

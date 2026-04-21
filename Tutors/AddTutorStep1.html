@@ -7,6 +7,9 @@
 
 <body>
 
+<!-- =========================================
+     TOP BAR + NAVIGATION
+========================================= -->
 <div class="top-bar">The University of Texas at Dallas</div>
 
 <div class="navbar">
@@ -20,6 +23,10 @@
 
 <h2>Tutor Registration</h2>
 
+<!-- =========================================
+     STEP 1 FORM (BASIC INFO)
+     Sends data to handler which routes to Step 2
+========================================= -->
 <form action="../PHP/tutorStep1Handler.php" method="post">
 
 <label>First Name</label>
@@ -37,6 +44,7 @@
 <label>Email</label>
 <input type="email" name="email">
 
+<!-- Determines which Step 2 page to go to -->
 <label>Tutor Type</label>
 <select name="tutorType" required>
     <option value="">--Select--</option>

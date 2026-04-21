@@ -1,17 +1,33 @@
 <?php
+// =========================================
+// DATABASE CONNECTION
+// =========================================
 include '../PHP/db.php';
 
-// Fetch dynamic data
+// =========================================
+// FETCH DATA FOR DROPDOWNS
+// =========================================
+
+// Students list
 $students = $conn->query("SELECT StudentIndex, FirstName, Surname FROM Students");
+
+// Tutors list
 $tutors = $conn->query("SELECT TutorIndex, FirstName, Surname FROM Tutors");
+
+// Locations list (includes room name for UI clarity)
 $locations = $conn->query("SELECT LocationIndex, BuildingID, RoomNumber, RoomName FROM Locations");
+
+// Courses list (sorted for usability)
 $courses = $conn->query("
     SELECT CourseIndex, CoursePrefix, CourseNumber, CourseName 
     FROM Courses 
     ORDER BY CoursePrefix, CourseNumber
 ");
 
-// 🔥 Tutor ↔ Course mapping
+// =========================================
+// BUILD COURSE → TUTOR MAP
+// Used for frontend filtering (course selection limits tutors)
+// =========================================
 $tutorCourses = $conn->query("SELECT TutorIndex, CourseIndex FROM TutorCourses");
 
 $map = [];
@@ -19,7 +35,7 @@ while ($row = $tutorCourses->fetch_assoc()) {
     $map[$row['CourseIndex']][] = $row['TutorIndex'];
 }
 
-// Error message
+// Error message (if redirected from backend)
 $error = $_GET['error'] ?? null;
 ?>
 
@@ -33,8 +49,10 @@ $error = $_GET['error'] ?? null;
 
 <body>
 
+<!-- TOP BAR -->
 <div class="top-bar">The University of Texas at Dallas</div>
 
+<!-- NAVIGATION -->
 <div class="navbar">
     <a href="/TUTORLINK/Dashboard.php">Home</a>
     <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
@@ -46,13 +64,17 @@ $error = $_GET['error'] ?? null;
 
 <h2>Book a Tutoring Session</h2>
 
+<!-- ERROR DISPLAY -->
 <?php if ($error): ?>
     <div class="error"><?php echo htmlspecialchars($error); ?></div>
 <?php endif; ?>
 
+<!-- MAIN FORM -->
 <form action="/TUTORLINK/PHP/addLesson.php" method="post">
 
-<!-- STUDENT -->
+<!-- =========================================
+     STUDENT SELECTION
+========================================= -->
 <h3>Student</h3>
 <select name="studentIndex" required>
 <?php while($row = $students->fetch_assoc()) { ?>
@@ -62,7 +84,9 @@ $error = $_GET['error'] ?? null;
 <?php } ?>
 </select>
 
-<!-- TUTOR -->
+<!-- =========================================
+     TUTOR SELECTION
+========================================= -->
 <h3>Tutor</h3>
 <select name="tutorIndex" id="tutorSelect" required>
 <?php while($row = $tutors->fetch_assoc()) { ?>
@@ -72,7 +96,9 @@ $error = $_GET['error'] ?? null;
 <?php } ?>
 </select>
 
-<!-- LOCATION -->
+<!-- =========================================
+     LOCATION SELECTION
+========================================= -->
 <h3>Location</h3>
 <select name="locationIndex" required>
 <?php while($row = $locations->fetch_assoc()) { ?>
@@ -82,12 +108,16 @@ $error = $_GET['error'] ?? null;
 <?php } ?>
 </select>
 
-<!-- LESSON DETAILS -->
+<!-- =========================================
+     LESSON DETAILS (COURSE / TOPIC)
+========================================= -->
 <h3>Lesson Details</h3>
 
+<!-- Course search -->
 <label>Search Courses</label>
 <input type="text" id="searchBox" onkeyup="filterCourses()" placeholder="Search courses...">
 
+<!-- Prefix filter -->
 <label>Filter by Prefix</label>
 <select id="prefixFilter" onchange="filterByPrefix()">
     <option value="">All</option>
@@ -99,32 +129,39 @@ $error = $_GET['error'] ?? null;
     <option value="PSY">PSY</option>
 </select>
 
+<!-- Course list -->
 <select name="courseIndex" id="courseSelect" size="10">
     <option value="">--Select Course--</option>
-
     <?php while($row = $courses->fetch_assoc()): ?>
         <option value="<?= $row['CourseIndex'] ?>">
             <?= $row['CoursePrefix'] . " " . $row['CourseNumber'] . " -- " . $row['CourseName'] ?>
         </option>
     <?php endwhile; ?>
-
 </select>
 
+<!-- Topic alternative -->
 <input type="text" name="topic" id="topicInput" placeholder="Or enter topic">
 
-<!-- SCHEDULE -->
+<!-- =========================================
+     SCHEDULING SECTION
+========================================= -->
 <h3>Schedule</h3>
 
+<!-- Date + Availability -->
 <div class="date-group">
     <label>Date</label>
     <input type="date" name="lessonDate" required>
 
+    <!-- Triggers backend availability API -->
     <button type="button" class="inline-button" onclick="loadAvailability()">
         Check Availability
     </button>
 </div>
+
+<!-- Availability results render here -->
 <div id="availabilityResults"></div>
 
+<!-- Time + Duration -->
 <div class="schedule-section">
     <label>Start Time</label>
     <input type="time" name="startTime" required>
@@ -132,8 +169,9 @@ $error = $_GET['error'] ?? null;
     <label>Duration (minutes)</label>
     <input type="number" name="duration" min="15" max="120" step="5">
 
+    <!-- UX note for default duration -->
     <p class="duration-note">
-    * If no duration is selected, availability defaults to 30 minutes.
+        * If no duration is selected, availability defaults to 30 minutes.
     </p>
 </div>
 
@@ -144,10 +182,14 @@ $error = $_GET['error'] ?? null;
 </div>
 
 <script>
-// 🔥 Tutor-course map from PHP
+// =========================================
+// COURSE → TUTOR FILTER MAP (from PHP)
+// =========================================
 const tutorCourseMap = <?php echo json_encode($map); ?>;
 
-// SEARCH
+// =========================================
+// COURSE SEARCH (TEXT FILTER)
+// =========================================
 function filterCourses() {
     let input = document.getElementById("searchBox").value.toLowerCase();
     let options = document.getElementById("courseSelect").options;
@@ -158,7 +200,9 @@ function filterCourses() {
     }
 }
 
-// PREFIX FILTER
+// =========================================
+// PREFIX FILTER (CS, MATH, etc.)
+// =========================================
 function filterByPrefix() {
     let prefix = document.getElementById("prefixFilter").value;
     let options = document.getElementById("courseSelect").options;
@@ -170,7 +214,10 @@ function filterByPrefix() {
     }
 }
 
-// COURSE → TUTOR FILTER
+// =========================================
+// COURSE → TUTOR FILTER LOGIC
+// Ensures only qualified tutors appear
+// =========================================
 const course = document.getElementById('courseSelect');
 const topic = document.getElementById('topicInput');
 
@@ -191,27 +238,23 @@ course.addEventListener('change', () => {
         }
     }
 
-    // topic lock
-    if (course.value !== "") {
-        topic.value = "";
-        topic.disabled = true;
-    } else {
-        topic.disabled = false;
-    }
+    // Lock topic if course selected
+    topic.disabled = course.value !== "";
+    if (course.value !== "") topic.value = "";
 });
 
-// TOPIC LOCK
+// =========================================
+// TOPIC → COURSE LOCK
+// Prevents both being used at once
+// =========================================
 topic.addEventListener('input', () => {
-    if (topic.value.trim() !== "") {
-        course.value = "";
-        course.disabled = true;
-    } else {
-        course.disabled = false;
-    }
+    course.disabled = topic.value.trim() !== "";
+    if (topic.value.trim() !== "") course.value = "";
 });
 
-// AVAILABILITY
-
+// =========================================
+// LOAD AVAILABILITY (API CALL)
+// =========================================
 function loadAvailability() {
     const tutor = document.getElementById("tutorSelect").value;
     const date = document.querySelector("input[name='lessonDate']").value;
@@ -222,12 +265,14 @@ function loadAvailability() {
     }
 
     const location = document.querySelector("select[name='locationIndex']").value;
-    const durationInput = document.querySelector("input[name='duration']");
-    let duration = durationInput.value;
+
+    let duration = document.querySelector("input[name='duration']").value;
     if (!duration) duration = 30; // default
+
     fetch(`/TUTORLINK/PHP/getAvailability.php?tutor=${tutor}&date=${date}&location=${location}&duration=${duration}`)
-        .then(res => res.json()) // 🔥 CHANGE HERE
+        .then(res => res.json())
         .then(slots => {
+
             const output = document.getElementById("availabilityResults");
 
             if (slots.length === 0) {
@@ -251,15 +296,16 @@ function loadAvailability() {
         });
 }
 
+// =========================================
+// SELECT TIME SLOT
+// =========================================
 function selectTime(time) {
     document.querySelector("input[name='startTime']").value = time;
 
-    // remove previous selection
     document.querySelectorAll('.time-slot').forEach(btn => {
         btn.classList.remove('selected');
     });
 
-    // highlight clicked button
     event.target.classList.add('selected');
 }
 </script>

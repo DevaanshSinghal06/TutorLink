@@ -1,10 +1,16 @@
 <?php
+// =========================================
+// DATABASE CONNECTION
+// =========================================
 require_once '../PHP/db.php';
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// =========================================
+// FETCH ALL COURSES FOR SELECTION
+// =========================================
 $sql = "SELECT CourseIndex, CoursePrefix, CourseNumber, CourseName 
         FROM Courses 
         ORDER BY CoursePrefix, CourseNumber";
@@ -25,6 +31,7 @@ if (!$result) {
 </head>
 <body>
 
+<!-- NAV -->
 <div class="top-bar">The University of Texas at Dallas</div>
 
 <div class="navbar">
@@ -38,9 +45,13 @@ if (!$result) {
 
 <h2>External Tutor Details</h2>
 
+<!-- =========================================
+     STEP 2 FORM (EXTERNAL TUTOR)
+     Receives Step 1 data via URL params
+========================================= -->
 <form action="../PHP/addTutor.php" method="post">
 
-    <!-- Hidden fields -->
+    <!-- Hidden fields from Step 1 -->
     <input type="hidden" name="firstName" id="firstName">
     <input type="hidden" name="surname" id="surname">
     <input type="hidden" name="age" id="age">
@@ -48,7 +59,7 @@ if (!$result) {
     <input type="hidden" name="email" id="email">
     <input type="hidden" name="tutorType" value="External">
 
-    <!-- External fields -->
+    <!-- External-specific fields -->
     <label>Tutor ID</label>
     <input type="text" name="tutorid" required>
 
@@ -58,7 +69,9 @@ if (!$result) {
     <label>Other Info</label>
     <input type="text" name="other">
 
-    <!-- Filters -->
+    <!-- =========================================
+         COURSE FILTERING UI
+    ========================================= -->
     <label>Search Courses</label>
     <input type="text" id="searchBox" placeholder="Search courses..." onkeyup="filterCourses()">
 
@@ -74,7 +87,7 @@ if (!$result) {
         <option value="PSY">PSY</option>
     </select>
 
-    <!-- Courses -->
+    <!-- Multi-select course list -->
     <p><i>Hold Command (Mac) or Ctrl (Windows) to select multiple courses</i></p>
 
     <label>Courses Taught</label>
@@ -95,13 +108,18 @@ if (!$result) {
 </div>
 
 <script>
-// Transfer Step 1 data
+// =========================================
+// TRANSFER STEP 1 DATA (FROM URL PARAMS)
+// =========================================
 const params = new URLSearchParams(window.location.search);
+
 ["firstName","surname","age","phone","email"].forEach(id => {
     document.getElementById(id).value = params.get(id) || '';
 });
 
-// Search filter
+// =========================================
+// SEARCH FILTER (TEXT MATCH)
+// =========================================
 function filterCourses() {
     let input = document.getElementById("searchBox").value.toLowerCase();
     let options = document.getElementById("courseSelect").options;
@@ -112,7 +130,9 @@ function filterCourses() {
     }
 }
 
-// Prefix filter
+// =========================================
+// PREFIX FILTER (CS / MATH / etc.)
+// =========================================
 function filterByPrefix() {
     let prefix = document.getElementById("prefixFilter").value;
     let options = document.getElementById("courseSelect").options;

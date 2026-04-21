@@ -1,7 +1,12 @@
 <?php
+// =========================================
+// DATABASE CONNECTION
+// =========================================
 include '../PHP/db.php';
 
-// Get recent students
+// =========================================
+// FETCH RECENT STUDENTS (LIMIT 5)
+// =========================================
 $result = $conn->query("SELECT * FROM Students ORDER BY StudentIndex DESC LIMIT 5");
 ?>
 
@@ -15,8 +20,10 @@ $result = $conn->query("SELECT * FROM Students ORDER BY StudentIndex DESC LIMIT 
 
 <body>
 
+<!-- TOP BAR -->
 <div class="top-bar">TutorLink - Students</div>
 
+<!-- NAVBAR -->
 <div class="navbar">
     <a href="/TUTORLINK/Dashboard.php">Home</a>
     <a href="/TUTORLINK/Students/StudentsDashboard.php">Students</a>
@@ -28,13 +35,17 @@ $result = $conn->query("SELECT * FROM Students ORDER BY StudentIndex DESC LIMIT 
 
 <h2>Student Management</h2>
 
-<!-- ACTIONS -->
+<!-- =========================================
+     QUICK ACTION BUTTONS
+========================================= -->
 <div style="display:flex; gap:15px;">
     <a href="/TUTORLINK/Students/AddStudents.html"><button>Add Student</button></a>
     <a href="/TUTORLINK/Students/ViewStudents.php"><button>View All</button></a>
 </div>
 
-<!-- LIVE PREVIEW -->
+<!-- =========================================
+     RECENT STUDENTS PREVIEW
+========================================= -->
 <h3 style="margin-top:30px;">Recent Students</h3>
 
 <table>
@@ -46,13 +57,17 @@ $result = $conn->query("SELECT * FROM Students ORDER BY StudentIndex DESC LIMIT 
 
 <?php while($row = $result->fetch_assoc()): ?>
 <tr>
+
 <td><?php echo $row['FirstName'] . " " . $row['Surname']; ?></td>
+
 <td><?php echo $row['Email']; ?></td>
+
 <td>
     <a href="/TUTORLINK/Students/EditStudent.php?id=<?php echo $row['StudentIndex']; ?>" class="action-link">
         Edit
     </a>
 </td>
+
 </tr>
 <?php endwhile; ?>
 
