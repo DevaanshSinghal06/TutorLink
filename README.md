@@ -1,6 +1,6 @@
 # TutorLink
 
-TutorLink is a full-stack tutoring management system built with PHP, MySQL, HTML, CSS, and JavaScript. It was designed to manage students, tutors, lessons, locations, and course specializations in a university-style tutoring environment.
+TutorLink is a full-stack tutoring management system designed to manage students, tutors, lessons, locations, and course specializations in a university-style tutoring environment. It was built with PHP, MySQL, HTML, CSS, and JavaScript.
 
 ## Features
 
@@ -19,12 +19,12 @@ TutorLink is a full-stack tutoring management system built with PHP, MySQL, HTML
 
 ## Tech Stack
 
-- PHP
-- MySQL
+- PHP (version 8.3.30)
+- MySQL (version 8.0.44)
 - HTML
 - CSS
 - JavaScript
-- MAMP
+- MAMP (version 7.4)
 - Git / GitHub
 
 ## Highlights
@@ -56,7 +56,7 @@ TUTORLINK/
 └── PHP/
 ```
 
-Example Workflows
+## Example Workflows
 
 Add a tutor
 
@@ -82,7 +82,7 @@ Edit a tutor
 3. Add or remove courses using the dual-list interface
 4. Save changes
 
-Database Design
+## Database Design
 
 Core tables include:
 
@@ -95,7 +95,7 @@ Core tables include:
 
 The TutorCourses table handles the many-to-many relationship between tutors and courses.
 
-What This Project Demonstrates
+## What This Project Demonstrates
 
 * Full-stack CRUD development
 * Relational database design
@@ -105,15 +105,36 @@ What This Project Demonstrates
 * Workflow-based system design
 * Maintainable code organization
 
-Running Locally
+## Running Locally
 
-1. Clone the repository
-2. Import the TutorLink database into MySQL
-3. Update PHP/db.php to match your local configuration
-4. Start Apache and MySQL
-5. Open the project through your local server
+1. Clone or download this repository into your web server directory.  
+   Example with MAMP on macOS: place the project inside `htdocs`, such as  
+   `.../MAMP/htdocs/TUTORLINK/`
 
-Future Improvements
+2. Import the TutorLink database into MySQL using a tool such as phpMyAdmin.
+
+3. Open `PHP/db.php` and update the database connection settings so they match your machine:
+   - host
+   - username
+   - password
+   - database name
+   - port
+
+4. Start Apache and MySQL.  
+   I used **MAMP** for local development.
+   In the MAMP app dashboard, set the web server to Apache, and the PHP version (e.g., 8.3.30, or later versions if you pay for **MAMP PRO**).
+   Then click on the Start button and proceed to Step 5.
+
+5. Open the project in your browser through Apache, not by opening the files directly.  
+   Example:
+   ```text
+   http://localhost:8888/TUTORLINK/Dashboard.php
+   ```
+   or whatever local URL matches your setup.
+   
+6. If everything is configured correctly, the TutorLink dashboard should load, and the system will be ready to use.
+
+## Future Improvements
 
 * Prepared statements for all SQL queries
 * Auth and role-based access control
@@ -121,6 +142,8 @@ Future Improvements
 * Calendar-style scheduling UI
 * Analytics and reporting
 
-Author
+```markdown
+## Author
 
-Devaansh Singhal
+**Devaansh Singhal**
+```
