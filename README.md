@@ -142,8 +142,6 @@ The TutorCourses table handles the many-to-many relationship between tutors and 
 * Calendar-style scheduling UI
 * Analytics and reporting
 
-```markdown
 ## Author
 
 **Devaansh Singhal**
-```
