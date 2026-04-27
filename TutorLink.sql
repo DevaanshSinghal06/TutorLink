@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Apr 18, 2026 at 08:24 PM
+-- Generation Time: Apr 27, 2026
 -- Server version: 8.0.44
 -- PHP Version: 8.3.30
 
@@ -11,29 +11,57 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+ /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+ /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+ /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+ /*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `TutorLink`
 --
 
 -- --------------------------------------------------------
+-- Table structure for table `Schools`
+-- --------------------------------------------------------
+
+CREATE TABLE `Schools` (
+  `SchoolAbbrev` varchar(4) NOT NULL,
+  `SchoolFull` varchar(100) NOT NULL,
+  PRIMARY KEY (`SchoolAbbrev`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Table structure for table `Courses`
+-- Dumping data for table `Schools`
 --
+
+INSERT INTO `Schools` (`SchoolAbbrev`, `SchoolFull`) VALUES
+('BAHT', 'Harry W. Bass Jr. School of Arts, Humanities, and Technology'),
+('BBS', 'School of Behavioral and Brain Sciences'),
+('ECS', 'Erik Jonsson School of Engineering and Computer Science'),
+('EPPS', 'School of Economic, Political and Policy Sciences'),
+('HWHC', 'Hobson Wildenthal Honors College'),
+('IS', 'School of Interdisciplinary Studies'),
+('JSOM', 'Naveen Jindal School of Management'),
+('NSM', 'School of Natural Sciences and Mathematics');
+
+-- --------------------------------------------------------
+-- Table structure for table `Courses`
+-- --------------------------------------------------------
 
 CREATE TABLE `Courses` (
-  `CourseIndex` int NOT NULL,
+  `CourseIndex` int NOT NULL AUTO_INCREMENT,
   `CoursePrefix` varchar(5) NOT NULL,
   `CourseNumber` varchar(10) DEFAULT NULL,
   `CourseName` varchar(255) NOT NULL,
-  `SchoolAbbrev` varchar(4) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `SchoolAbbrev` varchar(4) DEFAULT NULL,
+  PRIMARY KEY (`CourseIndex`),
+  UNIQUE KEY `CoursePrefix` (`CoursePrefix`,`CourseNumber`),
+  KEY `fk_courses_school` (`SchoolAbbrev`),
+  CONSTRAINT `fk_courses_school`
+    FOREIGN KEY (`SchoolAbbrev`) REFERENCES `Schools` (`SchoolAbbrev`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci AUTO_INCREMENT=1573;
 
 --
 -- Dumping data for table `Courses`
@@ -316,7 +344,7 @@ INSERT INTO `Courses` (`CourseIndex`, `CoursePrefix`, `CourseNumber`, `CourseNam
 (1383, 'FIN', '4V90', 'Individual Study in Finance', 'JSOM'),
 (1384, 'FIN', '4V99', 'Special Topics in Finance', 'JSOM'),
 (1385, 'HONS', '3101', 'Medicine, Politics, and Philosophy', 'HWHC'),
-(1386, 'HONS', '3102', 'William Faulkner\'s Short Stories', 'HWHC'),
+(1386, 'HONS', '3102', 'William Faulkner''s Short Stories', 'HWHC'),
 (1387, 'HONS', '3103', 'Honey Bees and Society', 'HWHC'),
 (1388, 'HONS', '3104', 'Foreign Film & Political Culture', 'HWHC'),
 (1389, 'HONS', '3105', 'Memory', 'HWHC'),
@@ -505,48 +533,78 @@ INSERT INTO `Courses` (`CourseIndex`, `CoursePrefix`, `CourseNumber`, `CourseNam
 (1572, 'STAT', '4V97', 'Undergraduate Topics in Statistics', 'NSM');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `Lessons`
---
-
-CREATE TABLE `Lessons` (
-  `LessonID` int NOT NULL,
-  `StudentIndex` int NOT NULL,
-  `TutorIndex` int NOT NULL,
-  `LocationIndex` int NOT NULL,
-  `CourseIndex` int DEFAULT NULL,
-  `Topic` varchar(255) DEFAULT NULL,
-  `LessonDate` date NOT NULL,
-  `StartTime` time NOT NULL,
-  `EndTime` time NOT NULL,
-  `Duration` int NOT NULL,
-  `Status` varchar(20) NOT NULL
-) ;
-
---
--- Dumping data for table `Lessons`
---
-
-INSERT INTO `Lessons` (`LessonID`, `StudentIndex`, `TutorIndex`, `LocationIndex`, `CourseIndex`, `Topic`, `LessonDate`, `StartTime`, `EndTime`, `Duration`, `Status`) VALUES
-(1, 1002, 1, 3, 1427, NULL, '2026-04-20', '16:00:00', '16:30:00', 30, 'Upcoming');
-
+-- Table structure for table `Students`
 -- --------------------------------------------------------
 
+CREATE TABLE `Students` (
+  `StudentIndex` int NOT NULL,
+  `FirstName` varchar(20) NOT NULL,
+  `Surname` varchar(35) DEFAULT NULL,
+  `Age` int NOT NULL,
+  `PhoneNumber` varchar(20) DEFAULT NULL,
+  `Email` varchar(50) DEFAULT NULL,
+  `NetID` varchar(9) DEFAULT NULL,
+  `CometID` varchar(10) DEFAULT NULL,
+  `GradYear` int DEFAULT NULL,
+  PRIMARY KEY (`StudentIndex`),
+  UNIQUE KEY `NetID` (`NetID`),
+  UNIQUE KEY `CometID` (`CometID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
--- Table structure for table `Locations`
+-- Dumping data for table `Students`
 --
 
+INSERT INTO `Students` (`StudentIndex`, `FirstName`, `Surname`, `Age`, `PhoneNumber`, `Email`, `NetID`, `CometID`, `GradYear`) VALUES
+(1002, 'John', 'Wayne', 20, '469-555-5678', 'john@utdallas.edu', 'jxd210001', '2023987654', 2028),
+(1003, 'Devaansh', 'Singhal', 19, '2147632036', 'dxs200030@utdallas.edu', 'DXS200030', '2021563607', 2028);
+
+-- --------------------------------------------------------
+-- Table structure for table `Tutors`
+-- --------------------------------------------------------
+
+CREATE TABLE `Tutors` (
+  `TutorIndex` int NOT NULL,
+  `FirstName` varchar(20) NOT NULL,
+  `Surname` varchar(35) DEFAULT NULL,
+  `Age` int NOT NULL,
+  `PhoneNumber` varchar(20) DEFAULT NULL,
+  `Email` varchar(50) DEFAULT NULL,
+  `TutorType` varchar(10) NOT NULL,
+  `NetID` varchar(9) DEFAULT NULL,
+  `CometID` varchar(10) DEFAULT NULL,
+  `TutorID` varchar(20) DEFAULT NULL,
+  `Company` varchar(50) DEFAULT NULL,
+  `Other` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`TutorIndex`),
+  UNIQUE KEY `NetID` (`NetID`),
+  UNIQUE KEY `CometID` (`CometID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `Tutors`
+--
+
+INSERT INTO `Tutors` (`TutorIndex`, `FirstName`, `Surname`, `Age`, `PhoneNumber`, `Email`, `TutorType`, `NetID`, `CometID`, `TutorID`, `Company`, `Other`) VALUES
+(1, 'Noah', 'Hoenig', 20, NULL, 'Noah.Hoenig@utdallas.edu', 'UTD', 'NJH230000', '2024420569', NULL, NULL, NULL),
+(2, 'Devaansh', 'Singhal', 19, '2147632036', 'dxs200030@utdallas.edu', 'UTD', 'DXS200030', '2021563607', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+-- Table structure for table `Locations`
+-- --------------------------------------------------------
+
 CREATE TABLE `Locations` (
-  `LocationIndex` int NOT NULL,
+  `LocationIndex` int NOT NULL AUTO_INCREMENT,
   `BuildingID` varchar(4) NOT NULL,
   `BuildingName` varchar(100) NOT NULL,
   `RoomNumber` varchar(5) NOT NULL,
   `HoursAvailable` varchar(255) NOT NULL,
   `RoomName` varchar(100) DEFAULT NULL,
   `RoomType` varchar(50) DEFAULT NULL,
-  `Capacity` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `Capacity` int DEFAULT NULL,
+  PRIMARY KEY (`LocationIndex`),
+  UNIQUE KEY `BuildingID` (`BuildingID`,`RoomNumber`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci AUTO_INCREMENT=12;
 
 --
 -- Dumping data for table `Locations`
@@ -564,223 +622,70 @@ INSERT INTO `Locations` (`LocationIndex`, `BuildingID`, `BuildingName`, `RoomNum
 (11, 'MC', 'McDermott Library', '3.236', 'Mon-Thu 7AM–2AM | Fri 7AM–8PM | Sat-Sun 11AM–8PM', 'Topaz', 'Study Room', 4);
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `Schools`
---
-
-CREATE TABLE `Schools` (
-  `SchoolAbbrev` varchar(4) NOT NULL,
-  `SchoolFull` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `Schools`
---
-
-INSERT INTO `Schools` (`SchoolAbbrev`, `SchoolFull`) VALUES
-('BAHT', 'Harry W. Bass Jr. School of Arts, Humanities, and Technology'),
-('BBS', 'School of Behavioral and Brain Sciences'),
-('ECS', 'Erik Jonsson School of Engineering and Computer Science'),
-('EPPS', 'School of Economic, Political and Policy Sciences'),
-('HWHC', 'Hobson Wildenthal Honors College'),
-('IS', 'School of Interdisciplinary Studies'),
-('JSOM', 'Naveen Jindal School of Management'),
-('NSM', 'School of Natural Sciences and Mathematics');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `Students`
---
-
-CREATE TABLE `Students` (
-  `StudentIndex` int NOT NULL,
-  `FirstName` varchar(20) NOT NULL,
-  `Surname` varchar(35) DEFAULT NULL,
-  `Age` int NOT NULL,
-  `PhoneNumber` varchar(20) DEFAULT NULL,
-  `Email` varchar(50) DEFAULT NULL,
-  `NetID` varchar(9) DEFAULT NULL,
-  `CometID` varchar(10) DEFAULT NULL,
-  `GradYear` int DEFAULT NULL
-) ;
-
---
--- Dumping data for table `Students`
---
-
-INSERT INTO `Students` (`StudentIndex`, `FirstName`, `Surname`, `Age`, `PhoneNumber`, `Email`, `NetID`, `CometID`, `GradYear`) VALUES
-(1002, 'John', 'Wayne', 20, '469-555-5678', 'john@utdallas.edu', 'jxd210001', '2023987654', 2028);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `TutorCourses`
---
+-- --------------------------------------------------------
 
 CREATE TABLE `TutorCourses` (
   `TutorIndex` int NOT NULL,
-  `CourseIndex` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `Tutors`
---
-
-CREATE TABLE `Tutors` (
-  `TutorIndex` int NOT NULL,
-  `FirstName` varchar(20) NOT NULL,
-  `Surname` varchar(35) DEFAULT NULL,
-  `Age` int NOT NULL,
-  `PhoneNumber` varchar(20) DEFAULT NULL,
-  `Email` varchar(50) DEFAULT NULL,
-  `TutorType` varchar(10) NOT NULL,
-  `NetID` varchar(9) DEFAULT NULL,
-  `CometID` varchar(10) DEFAULT NULL,
-  `TutorID` varchar(20) DEFAULT NULL,
-  `Company` varchar(50) DEFAULT NULL,
-  `Other` varchar(50) DEFAULT NULL
-) ;
-
---
--- Dumping data for table `Tutors`
---
-
-INSERT INTO `Tutors` (`TutorIndex`, `FirstName`, `Surname`, `Age`, `PhoneNumber`, `Email`, `TutorType`, `NetID`, `CometID`, `TutorID`, `Company`, `Other`) VALUES
-(1, 'Devaansh', 'Singhal', 19, '2147632036', 'dxs200030@utdallas.edu', 'UTD', 'DXS200030', '2021563607', NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `TutorSpecializations`
---
-
-CREATE TABLE `TutorSpecializations` (
-  `TutorIndex` int NOT NULL,
-  `CourseIndex` int NOT NULL
+  `CourseIndex` int NOT NULL,
+  PRIMARY KEY (`TutorIndex`,`CourseIndex`),
+  CONSTRAINT `fk_tutorcourses_tutor`
+    FOREIGN KEY (`TutorIndex`) REFERENCES `Tutors`(`TutorIndex`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk_tutorcourses_course`
+    FOREIGN KEY (`CourseIndex`) REFERENCES `Courses`(`CourseIndex`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `TutorSpecializations`
+-- Dumping data for table `TutorCourses`
 --
 
-INSERT INTO `TutorSpecializations` (`TutorIndex`, `CourseIndex`) VALUES
+INSERT INTO `TutorCourses` (`TutorIndex`, `CourseIndex`) VALUES
 (1, 1426),
 (1, 1427),
 (1, 1428),
-(1, 1429);
+(2, 1426),
+(2, 1429);
+
+-- --------------------------------------------------------
+-- Table structure for table `Lessons`
+-- --------------------------------------------------------
+
+CREATE TABLE `Lessons` (
+  `LessonID` int NOT NULL,
+  `StudentIndex` int NOT NULL,
+  `TutorIndex` int NOT NULL,
+  `LocationIndex` int NOT NULL,
+  `CourseIndex` int DEFAULT NULL,
+  `Topic` varchar(255) DEFAULT NULL,
+  `LessonDate` date NOT NULL,
+  `StartTime` time NOT NULL,
+  `EndTime` time NOT NULL,
+  `Duration` int NOT NULL,
+  `Status` varchar(20) NOT NULL,
+  PRIMARY KEY (`LessonID`),
+  KEY `StudentIndex` (`StudentIndex`),
+  KEY `lessons_ibfk_2` (`TutorIndex`),
+  KEY `lessons_ibfk_3` (`LocationIndex`),
+  KEY `lessons_ibfk_4` (`CourseIndex`),
+  CONSTRAINT `lessons_ibfk_1` FOREIGN KEY (`StudentIndex`) REFERENCES `Students` (`StudentIndex`) ON DELETE CASCADE,
+  CONSTRAINT `lessons_ibfk_2` FOREIGN KEY (`TutorIndex`) REFERENCES `Tutors` (`TutorIndex`) ON DELETE CASCADE,
+  CONSTRAINT `lessons_ibfk_3` FOREIGN KEY (`LocationIndex`) REFERENCES `Locations` (`LocationIndex`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `lessons_ibfk_4` FOREIGN KEY (`CourseIndex`) REFERENCES `Courses` (`CourseIndex`) ON DELETE SET NULL ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Indexes for dumped tables
+-- Dumping data for table `Lessons`
 --
 
---
--- Indexes for table `Courses`
---
-ALTER TABLE `Courses`
-  ADD PRIMARY KEY (`CourseIndex`),
-  ADD UNIQUE KEY `CoursePrefix` (`CoursePrefix`,`CourseNumber`),
-  ADD KEY `fk_courses_school` (`SchoolAbbrev`);
+INSERT INTO `Lessons` (`LessonID`, `StudentIndex`, `TutorIndex`, `LocationIndex`, `CourseIndex`, `Topic`, `LessonDate`, `StartTime`, `EndTime`, `Duration`, `Status`) VALUES
+(1, 1002, 2, 3, 1429, NULL, '2026-05-01', '14:00:00', '14:20:00', 20, 'Upcoming');
 
---
--- Indexes for table `Lessons`
---
-ALTER TABLE `Lessons`
-  ADD PRIMARY KEY (`LessonID`),
-  ADD KEY `StudentIndex` (`StudentIndex`),
-  ADD KEY `lessons_ibfk_2` (`TutorIndex`),
-  ADD KEY `lessons_ibfk_3` (`LocationIndex`),
-  ADD KEY `lessons_ibfk_4` (`CourseIndex`);
-
---
--- Indexes for table `Locations`
---
-ALTER TABLE `Locations`
-  ADD PRIMARY KEY (`LocationIndex`),
-  ADD UNIQUE KEY `BuildingID` (`BuildingID`,`RoomNumber`);
-
---
--- Indexes for table `Schools`
---
-ALTER TABLE `Schools`
-  ADD PRIMARY KEY (`SchoolAbbrev`);
-
---
--- Indexes for table `Students`
---
-ALTER TABLE `Students`
-  ADD PRIMARY KEY (`StudentIndex`),
-  ADD UNIQUE KEY `NetID` (`NetID`),
-  ADD UNIQUE KEY `CometID` (`CometID`);
-
---
--- Indexes for table `TutorCourses`
---
-ALTER TABLE `TutorCourses`
-  ADD PRIMARY KEY (`TutorIndex`,`CourseIndex`);
-
---
--- Indexes for table `Tutors`
---
-ALTER TABLE `Tutors`
-  ADD PRIMARY KEY (`TutorIndex`),
-  ADD UNIQUE KEY `NetID` (`NetID`),
-  ADD UNIQUE KEY `CometID` (`CometID`);
-
---
--- Indexes for table `TutorSpecializations`
---
-ALTER TABLE `TutorSpecializations`
-  ADD PRIMARY KEY (`TutorIndex`,`CourseIndex`),
-  ADD KEY `tutorspecializations_ibfk_2` (`CourseIndex`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `Courses`
---
-ALTER TABLE `Courses`
-  MODIFY `CourseIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1573;
-
---
--- AUTO_INCREMENT for table `Locations`
---
-ALTER TABLE `Locations`
-  MODIFY `LocationIndex` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `Courses`
---
-ALTER TABLE `Courses`
-  ADD CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`SchoolAbbrev`) REFERENCES `Schools` (`SchoolAbbrev`),
-  ADD CONSTRAINT `fk_courses_school` FOREIGN KEY (`SchoolAbbrev`) REFERENCES `Schools` (`SchoolAbbrev`) ON DELETE RESTRICT;
-
---
--- Constraints for table `Lessons`
---
-ALTER TABLE `Lessons`
-  ADD CONSTRAINT `lessons_ibfk_1` FOREIGN KEY (`StudentIndex`) REFERENCES `Students` (`StudentIndex`) ON DELETE CASCADE,
-  ADD CONSTRAINT `lessons_ibfk_2` FOREIGN KEY (`TutorIndex`) REFERENCES `Tutors` (`TutorIndex`) ON DELETE CASCADE,
-  ADD CONSTRAINT `lessons_ibfk_3` FOREIGN KEY (`LocationIndex`) REFERENCES `Locations` (`LocationIndex`) ON DELETE CASCADE ON UPDATE RESTRICT,
-  ADD CONSTRAINT `lessons_ibfk_4` FOREIGN KEY (`CourseIndex`) REFERENCES `Courses` (`CourseIndex`) ON DELETE SET NULL ON UPDATE RESTRICT;
-
---
--- Constraints for table `TutorSpecializations`
---
-ALTER TABLE `TutorSpecializations`
-  ADD CONSTRAINT `tutorspecializations_ibfk_1` FOREIGN KEY (`TutorIndex`) REFERENCES `Tutors` (`TutorIndex`) ON DELETE CASCADE,
-  ADD CONSTRAINT `tutorspecializations_ibfk_2` FOREIGN KEY (`CourseIndex`) REFERENCES `Courses` (`CourseIndex`) ON DELETE CASCADE ON UPDATE RESTRICT;
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+ /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+ /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+ /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

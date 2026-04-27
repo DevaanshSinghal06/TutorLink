@@ -72,7 +72,7 @@ if ($conn->query($sql) === TRUE) {
     // =========================================
     foreach ($courses as $course) {
         $conn->query("
-            INSERT INTO TutorSpecializations (TutorIndex, CourseIndex)
+            INSERT INTO TutorCourses (TutorIndex, CourseIndex)
             VALUES ($newID, $course)
         ");
     }
